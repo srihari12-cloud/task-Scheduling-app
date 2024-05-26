@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import SignUp from './components/SignUp/SignUp.js';
+import Login from './components/Login/Login.js';
+import HomePage from './components/HomePage/HomePage.js';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -8,7 +10,9 @@ function App() {
     <div className="main">
       <Router>
         <Routes>
-          <Route path="/" element={<SignUp />} />
+          <Route path="/" exact element={<HomePage />} /> 
+          <Route path="/sign" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Router>
     </div>

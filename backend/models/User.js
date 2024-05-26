@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
 
+// Define the User schema with validation and required fields
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -29,9 +30,10 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+// Pre-save middleware to hash the password before saving the user
 UserSchema.pre("save", async function (next) {
     try {
-        const salt = await bcrypt.genSalt();
+        const salt = await bcrypt.genSalt(10); // Specify salt rounds
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
@@ -39,6 +41,20 @@ UserSchema.pre("save", async function (next) {
     }
 });
 
-const User = mongoose.model("User", UserSchema);
+UserSchema.statics.login = async function (email, password) {
+    const user = await this.findOne({ email });
+    console.log("insides "+user);
+    if (user) {
+        const auth = await bcrypt.compare(password, user.password);
+        console.log("insideauth"+auth);
+        if (auth) {
+            return user;
+        }
+        throw Error("Incorrect email or password"); 
+    }
+    throw Error("Incorrect email or password"); 
+};
 
+
+const User = mongoose.model("User", UserSchema);
 module.exports = User;
